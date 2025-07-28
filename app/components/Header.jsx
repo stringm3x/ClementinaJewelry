@@ -19,7 +19,7 @@ export default function Navbar() {
   return (
     <header
       className={`w-full px-6 md:px-16 py-4 flex items-center justify-between transition-all duration-300 z-50 ${
-        scrolled ? "bg-transparent shadow-sm" : "bg-white"
+        scrolled ? "bg-white shadow-sm" : "bg-transparent"
       } fixed top-0`}
     >
       {/* LOGO */}
