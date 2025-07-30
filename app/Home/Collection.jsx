@@ -25,17 +25,17 @@ const collections = [
 
 const Collection = () => {
   return (
-    <section className="h-screen flex flex-col gap-10 items-center p-20">
+    <section className="sm:h-screen flex flex-col gap-10 items-center p-10 sm:p-20">
       <div className="text-center">
-        <h1 className="text-4xl">NUEVA COLECCIÓN</h1>
-        <h1 className="text-5xl font-bold">SUMMER</h1>
+        <h1 className="text-2xl sm:text-4xl">NUEVA COLECCIÓN</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold">SUMMER</h1>
       </div>
 
-      <div className="flex flex-row gap-10">
+      <div className="flex flex-col sm:flex-row gap-5 xl:gap-10">
         {collections.map((items) => (
           <div
             key={items.id}
-            className="relative h-72 w-[350px] rounded-2xl content-end p-8"
+            className="relative h-72 w-[300px] sm:w-[220px] lg:w-[280px] xl:w-[350px] rounded-2xl content-end p-8"
           >
             <Image
               src={items.img}

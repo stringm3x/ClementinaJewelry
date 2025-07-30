@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShoppingBag, User, LogOut } from "lucide-react";
+import { ShoppingBag, User, LogOut, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Cart from "./Cart";
 import Link from "next/link";
@@ -10,6 +10,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { cartItems } = useCart();
 
   useEffect(() => {
@@ -20,14 +21,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Checar sesión al cargar
   useEffect(() => {
     const token =
       typeof window !== "undefined" && localStorage.getItem("customerToken");
     setLoggedIn(!!token);
   }, []);
 
-  // Cerrar sesión
   function handleLogout() {
     localStorage.removeItem("customerToken");
     setLoggedIn(false);
@@ -42,24 +41,24 @@ export default function Navbar() {
         } fixed top-0`}
       >
         {/* LOGO */}
-        <div className="text-2xl font-light tracking-widest text-center">
+        <div className="text-xl sm:text-2xl font-light tracking-widest text-center">
           <h1 className="leading-tight">CLEMENTINA</h1>
           <p className="text-xs tracking-[0.3em]">JEWELRY</p>
         </div>
 
-        {/* NAV LINKS */}
+        {/* NAV LINKS DESKTOP */}
         <nav className="hidden md:flex gap-8 text-sm font-medium">
-          <a href="/" className="hover:text-gray-600">
+          <Link href="/" className="hover:text-gray">
             Inicio
-          </a>
-          <a href="/nuevo" className="hover:text-gray-600">
+          </Link>
+          <Link href="/nuevo" className="hover:text-gray">
             Nuevo
-          </a>
-          <a href="/descuentos" className="hover:text-gray-600">
+          </Link>
+          <Link href="/descuentos" className="hover:text-gray">
             Descuentos
-          </a>
+          </Link>
           <div className="relative group cursor-pointer">
-            <span className="hover:text-gray-600 flex items-center gap-1">
+            <span className="hover:text-gray flex items-center gap-1">
               Comprar <span className="text-xs">▼</span>
             </span>
           </div>
@@ -87,8 +86,84 @@ export default function Navbar() {
               </span>
             )}
           </button>
+
+          {/* HAMBURGUESA SOLO EN MOBILE */}
+          <button
+            className="md:hidden ml-2"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+          >
+            {menuOpen ? (
+              <X className="w-6 h-6  transition-all duration-200" />
+            ) : (
+              <Menu className="w-6 h-6  transition-all duration-200" />
+            )}
+          </button>
         </div>
       </header>
+
+      {/* MENU LATERAL MOBILE */}
+      <div
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+          menuOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        } md:hidden`}
+        onClick={() => setMenuOpen(false)}
+      >
+        <nav
+          className={`absolute top-0 left-0 h-full w-3/4 max-w-xs bg-white shadow-xl transition-transform duration-300 ${
+            menuOpen ? "translate-x-0" : "-translate-x-full"
+          } flex flex-col justify-center gap-4 p-8`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Link
+            href="/"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Inicio
+          </Link>
+          <Link
+            href="/nuevo"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Nuevo
+          </Link>
+          <Link
+            href="/descuentos"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Descuentos
+          </Link>
+          <Link
+            href="/comprar"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Comprar
+          </Link>
+          {!loggedIn ? (
+            <Link
+              href="/login"
+              className="py-2 text-base hover:underline"
+              onClick={() => setMenuOpen(false)}
+            >
+              Iniciar sesión
+            </Link>
+          ) : (
+            <button
+              onClick={() => {
+                handleLogout();
+                setMenuOpen(false);
+              }}
+              className="py-2 text-base text-left hover:underline"
+            >
+              Cerrar sesión
+            </button>
+          )}
+        </nav>
+      </div>
 
       {/* Drawer del carrito */}
       <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />

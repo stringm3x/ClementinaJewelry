@@ -62,7 +62,7 @@ const Products = () => {
   };
 
   return (
-    <section className="relative px-10 py-10">
+    <section className="relative px-2 sm:px-5 lg:px-10 py-10">
       {/* Flechas */}
       <button
         onClick={() => scroll("left")}

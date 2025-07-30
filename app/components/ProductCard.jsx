@@ -6,7 +6,7 @@ export default function ProductCard({ product }) {
 
   return (
     <Link href={`/Product/${product.handle}`}>
-      <div className="w-[270px] h-72 flex flex-col gap-2">
+      <div className="w-[200px] xl:w-[270px] h-64 flex flex-col gap-2">
         {/* Imagen */}
         <div className="aspect-square w-full overflow-hidden rounded-md">
           <img

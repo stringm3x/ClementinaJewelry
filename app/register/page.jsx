@@ -100,7 +100,7 @@ export default function RegisterPage() {
             className="w-full border border-gray rounded-md px-4 py-2 placeholder-gray-400 text-sm focus:outline-none"
           />
 
-          {error && <p className="text-red-500 text-sm text-left">{error}</p>}
+          {error && <p className="text-red text-sm text-left">{error}</p>}
           {success && (
             <p className="text-green text-sm text-left">
               Cuenta creada, revisa tu correo para activar.
