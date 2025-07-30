@@ -5,10 +5,14 @@ export default async function BestSelling() {
   const products = await getAllProducts();
 
   return (
-    <section className="grid grid-cols-2 md:grid-cols-3 p-10">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+    <section className="flex flex-col gap-10 p-10">
+      <h1 className="text-5xl">LO MÁS VENDIDO</h1>
+
+      <div className="grid grid-cols-2 md:grid-cols-3">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
     </section>
   );
 }
