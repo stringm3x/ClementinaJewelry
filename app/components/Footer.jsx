@@ -3,7 +3,7 @@ import { Facebook, Instagram, Mail, Music2 } from "lucide-react";
 export default function Footer() {
   return (
     <footer className="bg-bg items-center text-white px-6 md:px-20 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-20 sm:gap-10 items-center">
         {/* Redes sociales */}
         <div className="flex flex-col gap-4">
           <h4 className="text-sm font-semibold">Nuestras redes sociales</h4>

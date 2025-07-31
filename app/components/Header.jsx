@@ -57,10 +57,38 @@ export default function Navbar() {
           <Link href="/descuentos" className="hover:text-gray">
             Descuentos
           </Link>
+          {/* Menú Comprar */}
           <div className="relative group cursor-pointer">
-            <span className="hover:text-gray flex items-center gap-1">
+            <span className="hover:text-gray flex items-center gap-1 select-none">
               Comprar <span className="text-xs">▼</span>
             </span>
+            {/* Dropdown */}
+            <div className="absolute left-0 top-2 mt-2 bg-white shadow-lg rounded-md py-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto min-w-[150px] transition-opacity z-40">
+              <Link
+                href="/Necklaces"
+                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
+              >
+                Collares
+              </Link>
+              <Link
+                href="/Bracelets"
+                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
+              >
+                Pulseras
+              </Link>
+              <Link
+                href="/Rings"
+                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
+              >
+                Anillos
+              </Link>
+              <Link
+                href="/Earrings"
+                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
+              >
+                Aretes
+              </Link>
+            </div>
           </div>
         </nav>
 

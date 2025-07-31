@@ -22,7 +22,7 @@ export default function ProductDetails({ product }) {
   ];
 
   return (
-    <div className="h-screen grid grid-cols-1 md:grid-cols-2 gap-10 p-8 items-center">
+    <section className="sm:h-screen grid grid-cols-1 md:grid-cols-2 gap-10 p-5 sm:p-10 items-center">
       {/* Galería */}
       <div className="flex flex-col gap-4">
         <div className="relative aspect-square w-full">
@@ -37,9 +37,9 @@ export default function ProductDetails({ product }) {
 
       {/* Detalles */}
       <div className="flex flex-col gap-5">
-        <h1 className="text-5xl font-semibold">{product.title}</h1>
-        <p className="text-zinc text-xl">Base Acero Inoxidable Ajustable</p>
-        <p className="text-4xl font-bold">${price}mx</p>
+        <h1 className="text-4xl lg:text-5xl font-semibold">{product.title}</h1>
+        <p className="text-zinc text-md lg:text-xl">Base Acero Inoxidable Ajustable</p>
+        <p className="text-3xl lg:text-4xl font-bold">${price}mx</p>
 
         {/* Tallas */}
         <div>
@@ -115,6 +115,6 @@ export default function ProductDetails({ product }) {
           AGREGAR AL CARRITO
         </button>
       </div>
-    </div>
+    </section>
   );
 }

@@ -10,11 +10,12 @@ const Hero = () => {
         fill
         className="absolute object-cover"
       />
-
+      {/*
       <div className="relative flex flex-col text-white">
         <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold">NUESTROS MEJORES DESCUENTOS</h1>
         <h1 className="text-lg sm:text-2xl lg:text-3xl">ESTÁN AQUÍ PARA TI</h1>
       </div>
+          */}
     </div>
   );
 };

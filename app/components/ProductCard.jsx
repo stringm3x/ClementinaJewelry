@@ -3,12 +3,21 @@ import Link from "next/link";
 
 export default function ProductCard({ product }) {
   const image = product.images.edges[0]?.node;
+  const variant = product.variants.edges[0]?.node;
+  const price = variant?.price.amount;
+  const compareAt = variant?.compareAtPrice?.amount;
+
+  // Calcula descuento
+  const hasDiscount = compareAt && compareAt > price;
+  const discountPercent = hasDiscount
+    ? Math.round(((compareAt - price) / compareAt) * 100)
+    : 0;
 
   return (
     <Link href={`/Product/${product.handle}`}>
       <div className="w-[200px] xl:w-[270px] h-64 flex flex-col gap-2">
         {/* Imagen */}
-        <div className="aspect-square w-full overflow-hidden rounded-md">
+        <div className="aspect-square w-3/4 overflow-hidden rounded-md">
           <img
             src={image?.url}
             alt={image?.altText || product.title}
@@ -21,13 +30,20 @@ export default function ProductCard({ product }) {
           {product.title}
         </h3>
 
-        {/* Subtítulo (puedes extraerlo desde una metafield si lo configuras en Shopify) */}
-        <p className="text-md text-zinc">Base de Acero inoxidable</p>
+        {/* Precio anterior */}
+        {hasDiscount && (
+          <p className="text-md text-zinc line-through">${compareAt}mx</p>
+        )}
 
-        {/* Precio */}
-        <p className="text-2xl font-medium">
-          ${product.variants.edges[0].node.price.amount}mx
-        </p>
+        {/* Precio actual */}
+        <p className="text-2xl font-medium">${price}mx</p>
+
+        {/* Descuento abajo */}
+        {hasDiscount && (
+          <p className="text-sm text-green font-bold">
+            -{discountPercent}% de descuento
+          </p>
+        )}
       </div>
     </Link>
   );

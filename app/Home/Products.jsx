@@ -29,24 +29,6 @@ const cards = [
     href: "",
     img: "/products/anillos.jpg",
   },
-  {
-    id: "5",
-    title: "Charms",
-    href: "",
-    img: "/products/charms.jpg",
-  },
-  {
-    id: "6",
-    title: "Relojes",
-    href: "",
-    img: "/products/relojes.jpg",
-  },
-  {
-    id: "7",
-    title: "Grabados",
-    href: "",
-    img: "/products/grabados.jpg",
-  },
 ];
 
 const Products = () => {
@@ -94,7 +76,7 @@ const Products = () => {
               className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-end items-center p-6 gap-2 text-center">
+            <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end items-center p-6 gap-2 text-center">
               <h1 className="text-white text-3xl">{item.title}</h1>
               <button className="bg-white hover:bg-black text-black hover:text-white px-6 py-2 rounded-full text-sm font-semibold">
                 Ver más
