@@ -4,7 +4,6 @@ import { useCart } from "@/context/CartContext";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { createShopifyCheckout } from "@/lib/shopify";
 
 export default function Cart({ isOpen, onClose }) {
   const { cartItems, removeFromCart } = useCart();
@@ -18,14 +17,18 @@ export default function Cart({ isOpen, onClose }) {
         quantity: item.quantity,
       }));
 
-      const res = await createShopifyCheckout(lineItems);
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: lineItems }),
+      });
 
-      if (res.checkout && res.checkout.webUrl) {
-        window.location.href = res.checkout.webUrl;
+      const data = await res.json();
+
+      if (data.webUrl) {
+        window.location.href = data.webUrl;
       } else {
-        alert(
-          res.userErrors?.[0]?.message || "Ocurrió un error en el checkout"
-        );
+        alert(data.error || "No se pudo crear el checkout. Intenta de nuevo.");
       }
     } catch (err) {
       alert("No se pudo crear el checkout. Intenta de nuevo.");
