@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { goToCheckout } from "@/lib/shopify";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -8,35 +9,6 @@ import { useState } from "react";
 export default function Cart({ isOpen, onClose }) {
   const { cartItems, removeFromCart } = useCart();
   const [loading, setLoading] = useState(false);
-
-  async function handleCheckout() {
-    setLoading(true);
-    try {
-      // IMPORTANTE: aquí la key debe ser 'lineItems'
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lineItems: cartItems.map((item) => ({
-            variantId: item.variantId,
-            quantity: item.quantity,
-          })),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        alert(data.error || "No se pudo crear el checkout. Intenta de nuevo.");
-      }
-    } catch (err) {
-      alert("No se pudo crear el checkout. Intenta de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <div
@@ -88,7 +60,16 @@ export default function Cart({ isOpen, onClose }) {
       <div className="p-4 border-t">
         <button
           className="w-full bg-black text-white py-3 rounded-full hover:bg-gray transition"
-          onClick={handleCheckout}
+          onClick={async () => {
+            setLoading(true);
+            try {
+              await goToCheckout(cartItems);
+            } catch (err) {
+              alert(err.message);
+            } finally {
+              setLoading(false);
+            }
+          }}
           disabled={cartItems.length === 0 || loading}
         >
           {loading ? "Redirigiendo..." : "Ir al checkout"}

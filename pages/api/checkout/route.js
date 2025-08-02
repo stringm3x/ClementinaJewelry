@@ -1,22 +1,15 @@
 // app/api/checkout/route.js
-
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const { lineItems } = await req.json();
 
-    // Validar entrada
-    if (
-      !body.lineItems ||
-      !Array.isArray(body.lineItems) ||
-      body.lineItems.length === 0
-    ) {
+    if (!lineItems || !Array.isArray(lineItems) || lineItems.length === 0) {
       return Response.json(
         { error: "No hay productos en el carrito" },
         { status: 400 }
       );
     }
 
-    // GraphQL mutation para Shopify Cart API (checkoutUrl)
     const mutation = `
       mutation CartCreate($input: CartInput!) {
         cartCreate(input: $input) {
@@ -29,8 +22,7 @@ export async function POST(req) {
       }
     `;
 
-    // Llama a la API de Shopify
-    const shopifyRes = await fetch(
+    const res = await fetch(
       `https://${process.env.SHOPIFY_DOMAIN}/api/2024-01/graphql.json`,
       {
         method: "POST",
@@ -43,7 +35,7 @@ export async function POST(req) {
           query: mutation,
           variables: {
             input: {
-              lines: body.lineItems.map((item) => ({
+              lines: lineItems.map((item) => ({
                 merchandiseId: item.variantId,
                 quantity: item.quantity,
               })),
@@ -53,15 +45,9 @@ export async function POST(req) {
       }
     );
 
-    // Revisa respuesta de Shopify
-    if (!shopifyRes.ok) {
-      return Response.json(
-        { error: "Shopify no responde: " + shopifyRes.statusText },
-        { status: 500 }
-      );
-    }
-
-    const shopifyData = await shopifyRes.json();
+    const text = await res.text();
+    // Opcional: console.log("Shopify checkout raw:", text);
+    const shopifyData = JSON.parse(text);
 
     if (
       shopifyData.errors ||

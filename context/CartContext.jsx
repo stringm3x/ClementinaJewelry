@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, useContext, useState } from "react";
 
 const CartContext = createContext();
@@ -15,7 +14,6 @@ export function CartProvider({ children }) {
       variant.selectedOptions.find((opt) => opt.name.toLowerCase() === "color")
         ?.value || "";
 
-    // Busca si ya existe (compara por variantId, size, color)
     const existing = cartItems.find(
       (item) =>
         item.variantId === variant.id &&
@@ -49,7 +47,7 @@ export function CartProvider({ children }) {
     }
   };
 
-  // Corregido: compara por variantId, no por id
+  // CORREGIDO: varianteId (no id) para quitar
   const removeFromCart = (variantId, size, color) => {
     setCartItems((prev) =>
       prev.filter(
