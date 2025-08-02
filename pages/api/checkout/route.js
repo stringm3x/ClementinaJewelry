@@ -1,10 +1,6 @@
-// app/api/checkout/route.js
-
 export async function POST(req) {
   try {
     const body = await req.json();
-
-    // Validar entrada
     if (
       !body.lineItems ||
       !Array.isArray(body.lineItems) ||
@@ -51,14 +47,6 @@ export async function POST(req) {
       }
     );
 
-    // Revisar si hay error en la petición a Shopify
-    if (!res.ok) {
-      return Response.json(
-        { error: "Shopify no responde: " + res.statusText },
-        { status: 500 }
-      );
-    }
-
     const shopifyData = await res.json();
 
     if (
@@ -82,7 +70,6 @@ export async function POST(req) {
 
     return Response.json({ checkoutUrl: url });
   } catch (err) {
-    // ¡Nunca devuelvas una respuesta vacía!
     return Response.json(
       { error: err.message || "Ocurrió un error en el servidor" },
       { status: 500 }

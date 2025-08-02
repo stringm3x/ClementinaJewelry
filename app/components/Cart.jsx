@@ -1,7 +1,4 @@
-"use client";
-
 import { useCart } from "@/context/CartContext";
-import { goToCheckout } from "@/lib/shopify";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -21,13 +18,13 @@ export default function Cart({ isOpen, onClose }) {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: lineItems }),
+        body: JSON.stringify({ lineItems }),
       });
 
       const data = await res.json();
 
-      if (data.webUrl) {
-        window.location.href = data.webUrl;
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
       } else {
         alert(data.error || "No se pudo crear el checkout. Intenta de nuevo.");
       }
@@ -50,7 +47,6 @@ export default function Cart({ isOpen, onClose }) {
           <X className="w-5 h-5" />
         </button>
       </div>
-
       {cartItems.length === 0 ? (
         <div className="p-6 text-center text-zinc">El carrito está vacío</div>
       ) : (
@@ -88,16 +84,10 @@ export default function Cart({ isOpen, onClose }) {
       <div className="p-4 border-t">
         <button
           className="w-full bg-black text-white py-3 rounded-full hover:bg-gray transition"
-          onClick={async () => {
-            try {
-              await goToCheckout(cartItems);
-            } catch (err) {
-              alert(err.message);
-            }
-          }}
+          onClick={handleCheckout}
           disabled={cartItems.length === 0 || loading}
         >
-          Ir al checkout
+          {loading ? "Redirigiendo..." : "Ir al checkout"}
         </button>
       </div>
     </div>
