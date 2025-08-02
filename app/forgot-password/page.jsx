@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { customerRecover } from "@/lib/shopify";
 import Link from "next/link";
 
 export default function RecuperarCuentaPage() {
@@ -17,10 +16,15 @@ export default function RecuperarCuentaPage() {
     setLoading(true);
 
     try {
-      const res = await customerRecover(email);
+      const res = await fetch("/api/recover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
 
-      if (res.userErrors.length > 0) {
-        setError(res.userErrors[0].message);
+      if (data.userErrors && data.userErrors.length > 0) {
+        setError(data.userErrors[0].message);
       } else {
         setMsg(
           "Listo. Si el correo está registrado, recibirás un email para restablecer tu contraseña."

@@ -1,108 +1,111 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { customerAccessTokenCreate } from "@/lib/shopify";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  async function handleLogin(e) {
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
     try {
-      const res = await customerAccessTokenCreate(email, password);
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
 
-      if (res.userErrors.length > 0) {
-        setError(res.userErrors[0].message);
-      } else if (res.customerAccessToken) {
+      if (data.userErrors && data.userErrors.length > 0) {
+        setError(data.userErrors[0].message || "Error desconocido.");
+      } else if (data.customerAccessToken) {
+        // Guarda el token para saber que está logueado
         localStorage.setItem(
           "customerToken",
-          res.customerAccessToken.accessToken
+          data.customerAccessToken.accessToken
         );
-        window.location.href = "/";
+        router.push("/"); // Redirige a Home o a donde gustes
       }
     } catch (err) {
-      setError("Error en el servidor. Intenta de nuevo.");
+      setError("Error al iniciar sesión. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="min-h-screen flex flex-col  items-center justify-center px-4 py-10">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-10 bg-white">
       <div className="max-w-sm w-full flex flex-col items-center text-center gap-8">
         {/* Logo */}
         <div>
-          <h1 className="text-5xl font-light tracking-widest leading-tight">
+          {/* Puedes cambiar el logo si prefieres */}
+          <h1 className="text-5xl font-light tracking-widest leading-tight text-black">
             CLEMENTINA
           </h1>
-          <p className="text-2xl tracking-[0.3em]">JEWELRY</p>
+          <p className="text-2xl tracking-[0.3em] text-black">JEWELRY</p>
         </div>
 
-        <h2 className="text-lg font-medium">Iniciar sesión</h2>
-        <p className="text-sm text-zinc">
-          Compra tus estilos, guarda tus favoritos, sigue tus pedidos y entrena
-          con nosotros.
+        <h2 className="text-lg font-semibold text-black">Iniciar sesión</h2>
+        <p className="text-sm text-zinc-600">
+          Compra tus estilos, guarda favoritos y sigue tus pedidos.
         </p>
 
-        <form className="w-full flex flex-col gap-4" onSubmit={handleLogin}>
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           <input
+            name="email"
             type="email"
-            required
             placeholder="Correo electrónico*"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray rounded-md px-4 py-2 placeholder-gray-400 text-sm focus:outline-none"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 text-sm focus:outline-none focus:border-black bg-white"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Contraseña*"
+            className="w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 text-sm focus:outline-none focus:border-black bg-white"
+            value={form.password}
+            onChange={handleChange}
+            required
           />
 
-          <div className="relative">
-            <input
-              type={showPass ? "text" : "password"}
-              required
-              placeholder="Contraseña*"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray rounded-md px-4 py-2 placeholder-gray-400 text-sm focus:outline-none pr-10"
-            />
-            <button
-              type="button"
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-zinc"
-              onClick={() => setShowPass(!showPass)}
-              tabIndex={-1}
-            >
-              {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-
-          {error && <p className="text-red text-sm text-left">{error}</p>}
-
-          <Link
-            href="/forgot-password"
-            className="text-sm underline text-zinc hover:text-black text-center"
-          >
-            ¿Haz olvidado tu contraseña?
-          </Link>
+          {error && <p className="text-red-500 text-sm text-left">{error}</p>}
 
           <button
             type="submit"
-            className="bg-black text-white py-3 rounded-full font-semibold text-sm tracking-wide"
+            className="bg-black text-white py-3 rounded-full font-semibold text-sm tracking-wide mt-2 transition hover:bg-zinc-800 disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Accediendo..." : "ACCESO"}
           </button>
         </form>
 
-        <p className="text-sm">
+        <Link
+          href="/forgot-password"
+          className="text-sm text-black underline text-center"
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
+
+        <p className="text-sm text-zinc-600">
           ¿No tienes cuenta?{" "}
-          <Link href="/register" className="font-semibold underline">
+          <Link href="/register" className="font-semibold underline text-black">
             Crear cuenta
           </Link>
         </p>
