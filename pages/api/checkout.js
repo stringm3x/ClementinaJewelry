@@ -1,18 +1,19 @@
-// app/api/checkout/route.js
+// pages/api/checkout.js
 
-export async function POST(req) {
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Método no permitido" });
+  }
+
   try {
-    // 1. Lee el body y revisa qué llega
-    const body = await req.json();
-    console.log("BODY RECIBIDO EN CHECKOUT:", body);
+    // 1. Lee el body
+    const body = req.body;
+    // Si usas Next.js 13/14, quizá necesites:
+    // const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
     const lineItems = body.lineItems || body.items || [];
     if (!Array.isArray(lineItems) || lineItems.length === 0) {
-      console.error("No hay productos en el carrito");
-      return Response.json(
-        { error: "No hay productos en el carrito" },
-        { status: 400 }
-      );
+      return res.status(400).json({ error: "No hay productos en el carrito" });
     }
 
     // 2. Prepara la mutación
@@ -29,7 +30,7 @@ export async function POST(req) {
     `;
 
     // 3. Haz el fetch a Shopify
-    const res = await fetch(
+    const shopifyRes = await fetch(
       `https://${process.env.SHOPIFY_DOMAIN}/api/2024-01/graphql.json`,
       {
         method: "POST",
@@ -52,22 +53,14 @@ export async function POST(req) {
       }
     );
 
-    // 4. Asegúrate que Shopify responde algo
-    const text = await res.text();
-    console.log("RESPUESTA DE SHOPIFY RAW:", text);
-
+    const text = await shopifyRes.text();
     let shopifyData;
     try {
       shopifyData = JSON.parse(text);
     } catch (err) {
-      console.error("No se pudo parsear el JSON:", err);
-      return Response.json(
-        { error: "Respuesta inválida de Shopify" },
-        { status: 500 }
-      );
+      return res.status(500).json({ error: "Respuesta inválida de Shopify" });
     }
 
-    // 5. Si hay error, responde
     if (
       shopifyData.errors ||
       shopifyData.data?.cartCreate?.userErrors?.length
@@ -76,24 +69,20 @@ export async function POST(req) {
         shopifyData.errors?.[0]?.message ||
         shopifyData.data.cartCreate.userErrors?.[0]?.message ||
         "Error desconocido de Shopify";
-      return Response.json({ error: message }, { status: 400 });
+      return res.status(400).json({ error: message });
     }
 
     const url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
     if (!url) {
-      return Response.json(
-        { error: "No se obtuvo el checkoutUrl de Shopify" },
-        { status: 500 }
-      );
+      return res
+        .status(500)
+        .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
 
-    return Response.json({ checkoutUrl: url });
+    return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
-    // ¡Nunca devuelvas una respuesta vacía!
-    console.error("CATCH ERROR EN CHECKOUT:", err);
-    return Response.json(
-      { error: err.message || "Ocurrió un error en el servidor" },
-      { status: 500 }
-    );
+    return res.status(500).json({
+      error: err.message || "Ocurrió un error en el servidor",
+    });
   }
 }
