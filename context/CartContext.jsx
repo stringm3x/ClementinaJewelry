@@ -15,7 +15,7 @@ export function CartProvider({ children }) {
       variant.selectedOptions.find((opt) => opt.name.toLowerCase() === "color")
         ?.value || "";
 
-    // Busca si ya existe
+    // Busca si ya existe (compara por variantId, size, color)
     const existing = cartItems.find(
       (item) =>
         item.variantId === variant.id &&
@@ -49,11 +49,16 @@ export function CartProvider({ children }) {
     }
   };
 
-  const removeFromCart = (id, size, color) => {
+  // Corregido: compara por variantId, no por id
+  const removeFromCart = (variantId, size, color) => {
     setCartItems((prev) =>
       prev.filter(
         (item) =>
-          !(item.id === id && item.size === size && item.color === color)
+          !(
+            item.variantId === variantId &&
+            item.size === size &&
+            item.color === color
+          )
       )
     );
   };

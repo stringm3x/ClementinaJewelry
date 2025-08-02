@@ -1,3 +1,5 @@
+"use client";
+
 import { useCart } from "@/context/CartContext";
 import { X } from "lucide-react";
 import Image from "next/image";
@@ -10,15 +12,16 @@ export default function Cart({ isOpen, onClose }) {
   async function handleCheckout() {
     setLoading(true);
     try {
-      const lineItems = cartItems.map((item) => ({
-        variantId: item.variantId,
-        quantity: item.quantity,
-      }));
-
+      // IMPORTANTE: aquí la key debe ser 'lineItems'
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lineItems }),
+        body: JSON.stringify({
+          lineItems: cartItems.map((item) => ({
+            variantId: item.variantId,
+            quantity: item.quantity,
+          })),
+        }),
       });
 
       const data = await res.json();
@@ -47,6 +50,7 @@ export default function Cart({ isOpen, onClose }) {
           <X className="w-5 h-5" />
         </button>
       </div>
+
       {cartItems.length === 0 ? (
         <div className="p-6 text-center text-zinc">El carrito está vacío</div>
       ) : (
