@@ -1,37 +1,55 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { ShoppingBag, User, LogOut, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Cart from "./Cart";
-import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { cartItems } = useCart();
 
+  // Animación de scroll
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Comprobar token de login cuando el componente esté montado
   useEffect(() => {
-    const token =
-      typeof window !== "undefined" && localStorage.getItem("customerToken");
-    setLoggedIn(!!token);
+    setMounted(true);
+    const checkToken = () =>
+      setLoggedIn(!!localStorage.getItem("customerToken"));
+    checkToken();
+    window.addEventListener("storage", checkToken);
+    return () => window.removeEventListener("storage", checkToken);
   }, []);
 
   function handleLogout() {
     localStorage.removeItem("customerToken");
     setLoggedIn(false);
+    setMenuOpen(false);
     window.location.reload();
   }
+
+  // LINKS DE NAVEGACIÓN (puedes agregar más o cambiar rutas)
+  const navLinks = [
+    { label: "Inicio", href: "/" },
+  ];
+
+  // Categorías de compra
+  const buyLinks = [
+    { label: "Collares", href: "/Necklaces" },
+    { label: "Pulseras", href: "/Bracelets" },
+    { label: "Anillos", href: "/Rings" },
+    { label: "Aretes", href: "/Earrings" },
+  ];
 
   return (
     <>
@@ -41,53 +59,37 @@ export default function Navbar() {
         } fixed top-0`}
       >
         {/* LOGO */}
-        <div className="text-xl sm:text-2xl font-light tracking-widest text-center">
+        <div className="text-xl sm:text-2xl font-light tracking-widest text-center select-none">
           <h1 className="leading-tight">CLEMENTINA</h1>
           <p className="text-xs tracking-[0.3em]">JEWELRY</p>
         </div>
 
         {/* NAV LINKS DESKTOP */}
-        <nav className="hidden md:flex gap-8 text-sm font-medium">
-          <Link href="/" className="hover:text-gray">
-            Inicio
-          </Link>
-          <Link href="/nuevo" className="hover:text-gray">
-            Nuevo
-          </Link>
-          <Link href="/descuentos" className="hover:text-gray">
-            Descuentos
-          </Link>
+        <nav className="hidden md:flex gap-8 text-sm font-medium items-center">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-gray transition"
+            >
+              {link.label}
+            </Link>
+          ))}
           {/* Menú Comprar */}
           <div className="relative group cursor-pointer">
             <span className="hover:text-gray flex items-center gap-1 select-none">
               Comprar <span className="text-xs">▼</span>
             </span>
-            {/* Dropdown */}
             <div className="absolute left-0 top-2 mt-2 bg-white shadow-lg rounded-md py-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto min-w-[150px] transition-opacity z-40">
-              <Link
-                href="/Necklaces"
-                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
-              >
-                Collares
-              </Link>
-              <Link
-                href="/Bracelets"
-                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
-              >
-                Pulseras
-              </Link>
-              <Link
-                href="/Rings"
-                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
-              >
-                Anillos
-              </Link>
-              <Link
-                href="/Earrings"
-                className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
-              >
-                Aretes
-              </Link>
+              {buyLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="block px-5 py-2 hover:bg-black hover:text-white text-sm"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </div>
         </nav>
@@ -95,14 +97,19 @@ export default function Navbar() {
         {/* ICONOS */}
         <div className="flex items-center gap-6">
           {/* USUARIO */}
-          {loggedIn ? (
-            <button onClick={handleLogout} title="Cerrar sesión">
-              <LogOut className="w-5 h-5 text-gray-500" />
-            </button>
+          {mounted ? (
+            loggedIn ? (
+              <button onClick={handleLogout} title="Cerrar sesión">
+                <LogOut className="w-5 h-5 text-red" />
+              </button>
+            ) : (
+              <Link href="/login" title="Iniciar sesión">
+                <User className="w-5 h-5 text-bg" />
+              </Link>
+            )
           ) : (
-            <Link href="/login" title="Iniciar sesión">
-              <User className="w-5 h-5 text-gray-500" />
-            </Link>
+            // Opcional: Placeholder para evitar "parpadeo"
+            <div className="w-5 h-5" />
           )}
 
           {/* CARRITO */}
@@ -143,74 +150,37 @@ export default function Navbar() {
           } flex flex-col justify-center gap-4 p-8`}
           onClick={(e) => e.stopPropagation()}
         >
-          <Link
-            href="/"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Inicio
-          </Link>
-          <Link
-            href="/nuevo"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Nuevo
-          </Link>
-          <Link
-            href="/descuentos"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Descuentos
-          </Link>
-          <Link
-            href="/Necklaces"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Collares
-          </Link>
-          <Link
-            href="/Bracelets"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Pulseras
-          </Link>
-          <Link
-            href="/Rings"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Anillos
-          </Link>
-          <Link
-            href="/Earrings"
-            className="py-2 text-base hover:underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Aretes
-          </Link>
-          {!loggedIn ? (
+          {[...navLinks, ...buyLinks].map((link) => (
             <Link
-              href="/login"
+              key={link.href}
+              href={link.href}
               className="py-2 text-base hover:underline"
               onClick={() => setMenuOpen(false)}
             >
-              Iniciar sesión
+              {link.label}
             </Link>
-          ) : (
-            <button
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
-              }}
-              className="py-2 text-base text-left hover:underline"
-            >
-              Cerrar sesión
-            </button>
-          )}
+          ))}
+          {mounted ? (
+            loggedIn ? (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+                className="py-2 text-base text-left hover:underline"
+              >
+                Cerrar sesión
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="py-2 text-base hover:underline"
+                onClick={() => setMenuOpen(false)}
+              >
+                Iniciar sesión
+              </Link>
+            )
+          ) : null}
         </nav>
       </div>
 

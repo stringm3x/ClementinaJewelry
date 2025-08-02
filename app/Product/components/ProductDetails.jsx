@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 
-// Auxiliares (igual que antes)
+// Auxiliares
 function getUniqueOptions(variants, optionName) {
   const set = new Set();
   variants.forEach(({ node }) => {
@@ -49,6 +49,15 @@ function findVariant(variants, size, color) {
   );
 }
 
+// Nuevo hook para saber si hay sesión
+function useIsLoggedIn() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  useEffect(() => {
+    setLoggedIn(!!localStorage.getItem("customerToken"));
+  }, []);
+  return loggedIn;
+}
+
 export default function ProductDetails({ product }) {
   const images = product.images.edges;
   const variants = product.variants.edges;
@@ -56,7 +65,7 @@ export default function ProductDetails({ product }) {
   const sizes = getUniqueOptions(variants, "Talla");
   const colors = getUniqueOptions(variants, "Color");
 
-  // Si solo hay una talla y es "Ajustable", la seleccionamos siempre
+  // Si solo hay una talla y es "Ajustable"
   const autoTalla =
     sizes.length === 1 && sizes[0].toLowerCase() === "ajustable"
       ? sizes[0]
@@ -67,6 +76,7 @@ export default function ProductDetails({ product }) {
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
+  const loggedIn = useIsLoggedIn();
 
   // Solo mostrar las combinaciones realmente disponibles
   const colorsAvailable = getAvailableColorsForSize(variants, selectedSize);
@@ -106,9 +116,7 @@ export default function ProductDetails({ product }) {
       {/* Detalles */}
       <div className="flex flex-col gap-5">
         <h1 className="text-4xl lg:text-5xl font-semibold">{product.title}</h1>
-        <p className="text-zinc text-lg lg:text-2xl">
-          {product.description}
-        </p>
+        <p className="text-zinc text-lg lg:text-2xl">{product.description}</p>
         <p className="text-3xl md:text-4xl font-bold">${price}mx</p>
         {showDiscount && (
           <p className="text-xl line-through text-zinc font-normal mb-1">
@@ -116,7 +124,7 @@ export default function ProductDetails({ product }) {
           </p>
         )}
         {sizes.length > 1 ||
-        (sizes.length === 1 && sizes[0].toLowerCase() !== "Ajustable") ? (
+        (sizes.length === 1 && sizes[0].toLowerCase() !== "ajustable") ? (
           <div>
             <p className="text-lg font-medium mb-1">Tallas:</p>
             <div className="flex gap-4">
@@ -202,13 +210,20 @@ export default function ProductDetails({ product }) {
 
         {/* Agregar al carrito */}
         <button
-          onClick={() => addToCart(product, selectedVariant, quantity)}
-          disabled={!inStock}
+          onClick={() => {
+            if (!loggedIn) {
+              alert("Debes iniciar sesión para agregar productos al carrito.");
+              // window.location.href = "/login"; // Descomenta si quieres redirigir automáticamente
+              return;
+            }
+            addToCart(product, selectedVariant, quantity);
+          }}
+          disabled={!inStock || !loggedIn}
           className={`mt-6 bg-black text-white px-6 py-3 rounded-full text-sm hover:bg-gray-800 transition w-full ${
-            !inStock ? "opacity-50 cursor-not-allowed" : ""
+            !inStock || !loggedIn ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          AGREGAR AL CARRITO
+          {loggedIn ? "AGREGAR AL CARRITO" : "INICIA SESIÓN PARA COMPRAR"}
         </button>
       </div>
     </section>

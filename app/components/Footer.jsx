@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Mail, Music2 } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -8,13 +9,28 @@ export default function Footer() {
         <div className="flex flex-col gap-4">
           <h4 className="text-sm font-semibold">Nuestras redes sociales</h4>
           <div className="flex gap-4">
-            <a href="#" className="bg-white text-black p-2 rounded-full">
+            <a
+              href="https://www.instagram.com/" // pon aquí tu URL real
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-black p-2 rounded-full"
+            >
               <Instagram className="w-5 h-5" />
             </a>
-            <a href="#" className="bg-white text-black p-2 rounded-full">
+            <a
+              href="https://www.facebook.com/" // pon aquí tu URL real
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-black p-2 rounded-full"
+            >
               <Facebook className="w-5 h-5" />
             </a>
-            <a href="#" className="bg-white text-black p-2 rounded-full">
+            <a
+              href="#" // pon aquí tu URL real
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white text-black p-2 rounded-full"
+            >
               <Music2 className="w-5 h-5" />
             </a>
           </div>
@@ -38,21 +54,27 @@ export default function Footer() {
         {/* Páginas */}
         <div className="flex flex-col items-end gap-2 text-sm">
           <h4 className="text-base font-semibold mb-1">Páginas</h4>
-          <a href="/" className="hover:underline">
+          <Link href="/" className="hover:underline">
             Inicio
-          </a>
-          <a href="/nuevo" className="hover:underline">
-            Nuevo
-          </a>
-          <a href="/descuentos" className="hover:underline">
-            Descuentos
-          </a>
-          <a href="/comprar" className="hover:underline">
-            Comprar
-          </a>
-          <a href="/aviso-de-privacidad" className="underline font-bold mt-2">
+          </Link>
+          <Link href="/Necklaces" className="hover:underline">
+            Collares
+          </Link>
+          <Link href="/Bracelets" className="hover:underline">
+            Pulseras
+          </Link>
+          <Link href="/Rings" className="hover:underline">
+            Anillos
+          </Link>
+          <Link href="/Earrings" className="hover:underline">
+            Aretes
+          </Link>
+          <Link
+            href="/aviso-de-privacidad"
+            className="underline font-bold mt-2"
+          >
             Aviso de privacidad
-          </a>
+          </Link>
         </div>
       </div>
     </footer>
