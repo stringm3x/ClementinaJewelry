@@ -7,20 +7,28 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
-  const addToCart = (product, selectedSize, selectedColor, quantity) => {
+  const addToCart = (product, variant, quantity) => {
+    const size =
+      variant.selectedOptions.find((opt) => opt.name.toLowerCase() === "talla")
+        ?.value || "";
+    const color =
+      variant.selectedOptions.find((opt) => opt.name.toLowerCase() === "color")
+        ?.value || "";
+
+    // Busca si ya existe
     const existing = cartItems.find(
       (item) =>
-        item.id === product.id &&
-        item.size === selectedSize &&
-        item.color === selectedColor
+        item.variantId === variant.id &&
+        item.size === size &&
+        item.color === color
     );
 
     if (existing) {
       setCartItems((prev) =>
         prev.map((item) =>
-          item.id === product.id &&
-          item.size === selectedSize &&
-          item.color === selectedColor
+          item.variantId === variant.id &&
+          item.size === size &&
+          item.color === color
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
@@ -29,12 +37,12 @@ export function CartProvider({ children }) {
       setCartItems((prev) => [
         ...prev,
         {
-          id: product.id,
+          variantId: variant.id,
           title: product.title,
-          price: product.variants.edges[0].node.price.amount,
-          image: product.images.edges[0].node.url,
-          size: selectedSize,
-          color: selectedColor,
+          price: variant.price.amount,
+          image: product.images.edges[0]?.node.url,
+          size,
+          color,
           quantity,
         },
       ]);

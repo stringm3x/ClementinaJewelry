@@ -7,7 +7,7 @@ import BestSelling from "./Home/BestSelling";
 export default async function HomePage() {
   const products = await getAllProducts();
 
-  console.log(products); // Solo para verificar en consola
+  console.log(products);
 
   return (
     <main className="overflow-hidden">

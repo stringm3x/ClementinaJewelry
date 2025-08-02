@@ -165,11 +165,32 @@ export default function Navbar() {
             Descuentos
           </Link>
           <Link
-            href="/comprar"
+            href="/Necklaces"
             className="py-2 text-base hover:underline"
             onClick={() => setMenuOpen(false)}
           >
-            Comprar
+            Collares
+          </Link>
+          <Link
+            href="/Bracelets"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Pulseras
+          </Link>
+          <Link
+            href="/Rings"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Anillos
+          </Link>
+          <Link
+            href="/Earrings"
+            className="py-2 text-base hover:underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Aretes
           </Link>
           {!loggedIn ? (
             <Link

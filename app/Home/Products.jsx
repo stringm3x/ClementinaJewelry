@@ -3,30 +3,31 @@
 import Image from "next/image";
 import React, { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 const cards = [
   {
     id: "1",
     title: "Aretes",
-    href: "",
+    href: "/Earrings",
     img: "/products/aretes.jpg",
   },
   {
     id: "2",
     title: "Pulseras",
-    href: "",
+    href: "/Bracelets",
     img: "/products/pulseras.jpg",
   },
   {
     id: "3",
     title: "Collares",
-    href: "",
+    href: "/Necklaces",
     img: "/products/collares.jpg",
   },
   {
     id: "4",
     title: "Anillos",
-    href: "",
+    href: "/Rings",
     img: "/products/anillos.jpg",
   },
 ];
@@ -59,7 +60,6 @@ const Products = () => {
         <ChevronRight />
       </button>
 
-    
       <div
         ref={scrollRef}
         className="flex gap-5 overflow-x-hidden no-scrollbar scroll-smooth"
@@ -78,9 +78,11 @@ const Products = () => {
             />
             <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end items-center p-6 gap-2 text-center">
               <h1 className="text-white text-3xl">{item.title}</h1>
-              <button className="bg-white hover:bg-black text-black hover:text-white px-6 py-2 rounded-full text-sm font-semibold">
-                Ver más
-              </button>
+              <Link href={item.href}>
+                <button className="bg-white hover:bg-black text-black hover:text-white px-6 py-2 rounded-full text-sm font-semibold">
+                  Ver más
+                </button>
+              </Link>
             </div>
           </div>
         ))}

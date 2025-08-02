@@ -9,7 +9,7 @@ export default function Cart({ isOpen, onClose }) {
 
   return (
     <div
-      className={`fixed top-0 right-0 w-full sm:w-[400px] h-full bg-white shadow-xl transition-transform duration-300 z-50 ${
+      className={`fixed top-0 right-0 pb-10 w-full sm:w-[400px] h-full bg-white shadow-xl transition-transform duration-300 z-50 ${
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
@@ -21,7 +21,7 @@ export default function Cart({ isOpen, onClose }) {
       </div>
 
       {cartItems.length === 0 ? (
-        <div className="p-6 text-center text-gray-500">
+        <div className="p-6 text-center text-zinc">
           El carrito está vacío
         </div>
       ) : (
@@ -38,14 +38,14 @@ export default function Cart({ isOpen, onClose }) {
               </div>
               <div className="flex-1">
                 <h3 className="font-medium text-sm">{item.title}</h3>
-                <p className="text-sm text-gray-500">Talla: {item.size}</p>
-                <p className="text-sm text-gray-500">Color: {item.color}</p>
+                <p className="text-sm text-zinc">Talla: {item.size}</p>
+                <p className="text-sm text-zinc">Color: {item.color}</p>
                 <p className="text-sm font-semibold">${item.price} mx</p>
                 <p className="text-xs">Cantidad: {item.quantity}</p>
               </div>
               <button
                 onClick={() => removeFromCart(item.id, item.size, item.color)}
-                className="text-sm text-red-500"
+                className="text-sm text-red"
               >
                 Quitar
               </button>
@@ -55,7 +55,7 @@ export default function Cart({ isOpen, onClose }) {
       )}
 
       <div className="p-4 border-t">
-        <button className="w-full bg-black text-white py-3 rounded-full hover:bg-gray-800 transition">
+        <button className="w-full bg-black text-white py-3 rounded-full hover:bg-gray transition">
           Ir al checkout
         </button>
       </div>
