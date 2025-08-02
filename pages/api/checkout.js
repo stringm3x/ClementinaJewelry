@@ -1,61 +1,48 @@
-// app/api/checkout/route.js
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const { lineItems } = await request.json();
+    const { lineItems } = await req.json();
 
-    const domain = process.env.SHOPIFY_DOMAIN;
-    const token = process.env.SHOPIFY_STOREFRONT_TOKEN;
-
-    const query = `
-      mutation checkoutCreate($input: CheckoutCreateInput!) {
-        checkoutCreate(input: $input) {
-          checkout {
+    const mutation = `
+      mutation CartCreate($input: CartInput!) {
+        cartCreate(input: $input) {
+          cart {
             id
-            webUrl
+            checkoutUrl
           }
-          userErrors {
-            field
-            message
-          }
+          userErrors { message }
         }
       }
     `;
 
-    const variables = {
-      input: {
-        lineItems: lineItems.map((item) => ({
-          variantId: item.variantId,
-          quantity: item.quantity,
-        })),
-      },
-    };
-
-    const res = await fetch(`https://${domain}/api/2024-01/graphql.json`, {
+    const res = await fetch(`https://${process.env.SHOPIFY_DOMAIN}/api/2024-01/graphql.json`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Shopify-Storefront-Access-Token": token,
+        "X-Shopify-Storefront-Access-Token": process.env.SHOPIFY_STOREFRONT_TOKEN,
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({
+        query: mutation,
+        variables: {
+          input: {
+            lines: lineItems.map(item => ({
+              merchandiseId: item.variantId,
+              quantity: item.quantity,
+            })),
+          },
+        },
+      }),
     });
 
-    const data = await res.json();
-    const out = data.data.checkoutCreate;
+    const { data, errors } = await res.json();
 
-    if (out.userErrors && out.userErrors.length > 0) {
-      return Response.json(
-        { error: out.userErrors[0].message },
-        { status: 400 }
-      );
+    if (errors || data.cartCreate.userErrors.length) {
+      return Response.json({ error: (errors && errors[0]?.message) || data.cartCreate.userErrors[0]?.message }, { status: 400 });
     }
-    if (!out.checkout?.webUrl) {
-      return Response.json(
-        { error: "No se pudo crear el checkout" },
-        { status: 400 }
-      );
-    }
-    return Response.json({ webUrl: out.checkout.webUrl }, { status: 200 });
-  } catch (error) {
-    return Response.json({ error: "Server error" }, { status: 500 });
+
+    return Response.json({
+      checkoutUrl: data.cartCreate.cart.checkoutUrl,
+    });
+  } catch (err) {
+    return Response.json({ error: err.message || "Ocurrió un error" }, { status: 500 });
   }
 }

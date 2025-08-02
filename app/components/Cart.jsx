@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { goToCheckout } from "@/lib/shopify";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -87,10 +88,16 @@ export default function Cart({ isOpen, onClose }) {
       <div className="p-4 border-t">
         <button
           className="w-full bg-black text-white py-3 rounded-full hover:bg-gray transition"
-          onClick={handleCheckout}
+          onClick={async () => {
+            try {
+              await goToCheckout(cartItems);
+            } catch (err) {
+              alert(err.message);
+            }
+          }}
           disabled={cartItems.length === 0 || loading}
         >
-          {loading ? "Redirigiendo..." : "Ir al checkout"}
+          Ir al checkout
         </button>
       </div>
     </div>
