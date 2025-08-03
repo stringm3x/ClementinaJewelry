@@ -87,8 +87,16 @@ export default function ProductDetails({ product }) {
   const compareAtPrice = selectedVariant?.compareAtPrice?.amount || "";
   const showDiscount = compareAtPrice && compareAtPrice !== price;
 
-  // Validar stock
-  const inStock = selectedVariant?.availableForSale && selectedVariant;
+  // Nuevo: obtener stock disponible
+  const stockDisponible = selectedVariant?.quantityAvailable ?? 0;
+  const inStock = selectedVariant?.availableForSale && stockDisponible > 0;
+
+  // Cantidad controlada por stock
+  function handleSetQuantity(newQty) {
+    if (newQty < 1) return;
+    if (newQty > stockDisponible) return;
+    setQuantity(newQty);
+  }
 
   // Imagen principal: intenta con altText/color
   const mainImage =
@@ -131,7 +139,10 @@ export default function ProductDetails({ product }) {
               {sizes.map((size) => (
                 <button
                   key={size}
-                  onClick={() => setSelectedSize(size)}
+                  onClick={() => {
+                    setSelectedSize(size);
+                    setQuantity(1); // Reset cantidad al cambiar talla
+                  }}
                   className={`px-3 py-1 border rounded ${
                     selectedSize === size
                       ? "bg-black text-white"
@@ -155,7 +166,10 @@ export default function ProductDetails({ product }) {
             {colors.map((colorName) => (
               <div key={colorName} className="flex flex-col items-center gap-1">
                 <button
-                  onClick={() => setSelectedColor(colorName)}
+                  onClick={() => {
+                    setSelectedColor(colorName);
+                    setQuantity(1); // Reset cantidad al cambiar color
+                  }}
                   disabled={!colorsAvailable.includes(colorName)}
                   className={`w-8 h-8 rounded-full border-2 ${
                     selectedColor === colorName
@@ -186,20 +200,30 @@ export default function ProductDetails({ product }) {
         <div className="flex items-center gap-4 mt-4">
           <button
             className="border px-2 py-1 text-lg"
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            disabled={!inStock}
+            onClick={() => handleSetQuantity(quantity - 1)}
+            disabled={!inStock || quantity <= 1}
           >
             -
           </button>
           <span>{quantity}</span>
           <button
             className="border px-2 py-1 text-lg"
-            onClick={() => setQuantity(quantity + 1)}
-            disabled={!inStock}
+            onClick={() => handleSetQuantity(quantity + 1)}
+            disabled={!inStock || quantity >= stockDisponible}
           >
             +
           </button>
         </div>
+        {stockDisponible > 0 && (
+          <p className="text-xs text-zinc">
+            Stock disponible: {stockDisponible}
+          </p>
+        )}
+        {quantity >= stockDisponible && stockDisponible > 0 && (
+          <p className="text-red text-xs mt-1">
+            No puedes agregar más de {stockDisponible} piezas disponibles.
+          </p>
+        )}
 
         {/* Mensaje si no hay disponibles */}
         {!inStock && (
@@ -213,7 +237,10 @@ export default function ProductDetails({ product }) {
           onClick={() => {
             if (!loggedIn) {
               alert("Debes iniciar sesión para agregar productos al carrito.");
-              // window.location.href = "/login"; // Descomenta si quieres redirigir automáticamente
+              return;
+            }
+            if (quantity > stockDisponible) {
+              alert(`Solo hay ${stockDisponible} piezas disponibles.`);
               return;
             }
             addToCart(product, selectedVariant, quantity);
