@@ -39,6 +39,8 @@ export default function LoginPage() {
           "customerToken",
           data.customerAccessToken.accessToken
         );
+        // Notifica al Navbar (¡a todas las tabs/páginas!)
+        window.dispatchEvent(new Event("customerTokenChanged"));
         router.push("/"); // Redirige a Home o a donde gustes
       }
     } catch (err) {

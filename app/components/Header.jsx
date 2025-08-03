@@ -11,39 +11,46 @@ export default function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const { cartItems } = useCart();
 
-  // Animación de scroll
+  // Detecta scroll para header sticky
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Comprobar token de login cuando el componente esté montado
+  // Escucha cambios en el token de login en todas las pestañas
   useEffect(() => {
-    setMounted(true);
     const checkToken = () =>
       setLoggedIn(!!localStorage.getItem("customerToken"));
+
     checkToken();
+
     window.addEventListener("storage", checkToken);
-    return () => window.removeEventListener("storage", checkToken);
+
+    // BONUS: Cuando se hace login desde el mismo componente (por ejemplo después de login),
+    // podemos lanzar un evento personalizado para que el Navbar se actualice sin recargar
+    window.addEventListener("customerTokenChanged", checkToken);
+
+    return () => {
+      window.removeEventListener("storage", checkToken);
+      window.removeEventListener("customerTokenChanged", checkToken);
+    };
   }, []);
+
+  // Cuando haces login, llama a este helper:
+  // window.dispatchEvent(new Event("customerTokenChanged"));
+  // Hazlo DESPUÉS de guardar el token en localStorage en tu login.
 
   function handleLogout() {
     localStorage.removeItem("customerToken");
-    setLoggedIn(false);
+    window.dispatchEvent(new Event("customerTokenChanged")); // ¡Actualiza Navbars!
     setMenuOpen(false);
-    window.location.reload();
+    setLoggedIn(false);
   }
 
-  // LINKS DE NAVEGACIÓN (puedes agregar más o cambiar rutas)
-  const navLinks = [
-    { label: "Inicio", href: "/" },
-  ];
-
-  // Categorías de compra
+  const navLinks = [{ label: "Inicio", href: "/" }];
   const buyLinks = [
     { label: "Collares", href: "/Necklaces" },
     { label: "Pulseras", href: "/Bracelets" },
@@ -64,7 +71,7 @@ export default function Navbar() {
           <p className="text-xs tracking-[0.3em]">JEWELRY</p>
         </div>
 
-        {/* NAV LINKS DESKTOP */}
+        {/* NAV LINKS */}
         <nav className="hidden md:flex gap-8 text-sm font-medium items-center">
           {navLinks.map((link) => (
             <Link
@@ -97,19 +104,14 @@ export default function Navbar() {
         {/* ICONOS */}
         <div className="flex items-center gap-6">
           {/* USUARIO */}
-          {mounted ? (
-            loggedIn ? (
-              <button onClick={handleLogout} title="Cerrar sesión">
-                <LogOut className="w-5 h-5 text-red" />
-              </button>
-            ) : (
-              <Link href="/login" title="Iniciar sesión">
-                <User className="w-5 h-5 text-bg" />
-              </Link>
-            )
+          {loggedIn ? (
+            <button onClick={handleLogout} title="Cerrar sesión">
+              <LogOut className="w-5 h-5 text-red" />
+            </button>
           ) : (
-            // Opcional: Placeholder para evitar "parpadeo"
-            <div className="w-5 h-5" />
+            <Link href="/login" title="Iniciar sesión">
+              <User className="w-5 h-5 text-bg" />
+            </Link>
           )}
 
           {/* CARRITO */}
@@ -122,16 +124,16 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* HAMBURGUESA SOLO EN MOBILE */}
+          {/* HAMBURGUESA MOBILE */}
           <button
             className="md:hidden ml-2"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
           >
             {menuOpen ? (
-              <X className="w-6 h-6  transition-all duration-200" />
+              <X className="w-6 h-6 transition-all duration-200" />
             ) : (
-              <Menu className="w-6 h-6  transition-all duration-200" />
+              <Menu className="w-6 h-6 transition-all duration-200" />
             )}
           </button>
         </div>
@@ -160,27 +162,22 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          {mounted ? (
-            loggedIn ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMenuOpen(false);
-                }}
-                className="py-2 text-base text-left hover:underline"
-              >
-                Cerrar sesión
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="py-2 text-base hover:underline"
-                onClick={() => setMenuOpen(false)}
-              >
-                Iniciar sesión
-              </Link>
-            )
-          ) : null}
+          {loggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="py-2 text-base text-left hover:underline"
+            >
+              Cerrar sesión
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="py-2 text-base hover:underline"
+              onClick={() => setMenuOpen(false)}
+            >
+              Iniciar sesión
+            </Link>
+          )}
         </nav>
       </div>
 
