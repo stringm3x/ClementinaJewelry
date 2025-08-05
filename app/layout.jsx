@@ -13,7 +13,7 @@ export const metadata = {
   title: "Clementina Jewlery",
   description: "Joyeria Atemporal",
   icons: {
-    icon: "/favico.png",
+    icon: "/favico.jpeg",
   },
 };
 
