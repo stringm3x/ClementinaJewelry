@@ -49,7 +49,6 @@ function findVariant(variants, size, color) {
   );
 }
 
-// Nuevo hook para saber si hay sesión
 function useIsLoggedIn() {
   const [loggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
@@ -91,20 +90,26 @@ export default function ProductDetails({ product }) {
   const stockDisponible = selectedVariant?.quantityAvailable ?? 0;
   const inStock = selectedVariant?.availableForSale && stockDisponible > 0;
 
-  // Cantidad controlada por stock
-  function handleSetQuantity(newQty) {
-    if (newQty < 1) return;
-    if (newQty > stockDisponible) return;
-    setQuantity(newQty);
-  }
-
-  // Imagen principal: intenta con altText/color
+  // Imagen principal según color
   const mainImage =
     images.find(
       (img) =>
         img.node.altText &&
         img.node.altText.toLowerCase().includes(selectedColor.toLowerCase())
     ) || images[0];
+
+  // Validar si existe imagen específica para el color seleccionado
+  const colorHasImage = images.some(
+    (img) =>
+      img.node.altText &&
+      img.node.altText.toLowerCase().includes(selectedColor.toLowerCase())
+  );
+
+  function handleSetQuantity(newQty) {
+    if (newQty < 1) return;
+    if (newQty > stockDisponible) return;
+    setQuantity(newQty);
+  }
 
   return (
     <section className="sm:h-screen grid grid-cols-1 md:grid-cols-2 gap-10 p-5 sm:p-10 items-center">
@@ -118,6 +123,12 @@ export default function ProductDetails({ product }) {
             className="object-cover rounded-xl"
             priority
           />
+          {!colorHasImage && (
+            <span className="absolute bottom-2 left-2 text-xs bg-white/80 px-2 py-1 rounded">
+              No hay imagen específica para "{selectedColor}", se muestra la
+              principal.
+            </span>
+          )}
         </div>
       </div>
 
@@ -225,7 +236,6 @@ export default function ProductDetails({ product }) {
           </p>
         )}
 
-        {/* Mensaje si no hay disponibles */}
         {!inStock && (
           <p className="text-red text-lg font-medium mt-2">
             No hay productos disponibles para esta combinación.

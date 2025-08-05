@@ -13,7 +13,6 @@ export default async function HomePage() {
     <main className="overflow-hidden">
       <Hero />
       <Products />
-      <Collection />
       <BestSelling />
     </main>
   );
