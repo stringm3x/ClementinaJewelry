@@ -10,12 +10,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "No hay productos en el carrito" });
     }
 
+    // --- MUTACIÓN checkoutCreate ---
     const mutation = `
-      mutation CartCreate($input: CartInput!) {
-        cartCreate(input: $input) {
-          cart {
+      mutation checkoutCreate($input: CheckoutCreateInput!) {
+        checkoutCreate(input: $input) {
+          checkout {
             id
-            checkoutUrl
+            webUrl
           }
           userErrors { message }
         }
@@ -35,8 +36,8 @@ export default async function handler(req, res) {
           query: mutation,
           variables: {
             input: {
-              lines: lineItems.map((item) => ({
-                merchandiseId: item.variantId,
+              lineItems: lineItems.map((item) => ({
+                variantId: item.variantId,
                 quantity: item.quantity,
               })),
             },
@@ -53,30 +54,32 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Respuesta inválida de Shopify" });
     }
 
+    // Errores de Shopify
     if (
       shopifyData.errors ||
-      shopifyData.data?.cartCreate?.userErrors?.length
+      shopifyData.data?.checkoutCreate?.userErrors?.length
     ) {
       const message =
         shopifyData.errors?.[0]?.message ||
-        shopifyData.data.cartCreate.userErrors?.[0]?.message ||
+        shopifyData.data.checkoutCreate.userErrors?.[0]?.message ||
         "Error desconocido de Shopify";
       return res.status(400).json({ error: message });
     }
 
-    let url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
+    // URL de checkout
+    let url = shopifyData.data?.checkoutCreate?.checkout?.webUrl;
     if (!url) {
       return res
         .status(500)
         .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
 
-    // SIEMPRE usa el dominio .myshopify.com (forzado)
-    try {
-      const parsed = new URL(url);
-      parsed.hostname = "dkdy49-tw.myshopify.com"; // Reemplaza por el de tu tienda
-      url = parsed.toString();
-    } catch (e) {}
+    // (opcional) Forzar dominio myshopify.com si quieres:
+    // try {
+    //   const parsed = new URL(url);
+    //   parsed.hostname = "dkdy49-tw.myshopify.com"; // <-- reemplaza por el tuyo si quieres
+    //   url = parsed.toString();
+    // } catch (e) {}
 
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
