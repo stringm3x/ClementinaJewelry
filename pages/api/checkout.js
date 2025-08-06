@@ -64,13 +64,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: message });
     }
 
-    const url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
+    let url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
     if (!url) {
       return res
         .status(500)
         .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
-    // No modificar el URL, solo responde
+
+    // SIEMPRE usa el dominio .myshopify.com (forzado)
+    try {
+      const parsed = new URL(url);
+      parsed.hostname = "dkdy49-tw.myshopify.com"; // Reemplaza por el de tu tienda
+      url = parsed.toString();
+    } catch (e) {}
+
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
     return res.status(500).json({
