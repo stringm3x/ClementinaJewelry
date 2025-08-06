@@ -1,29 +1,25 @@
+// pages/api/checkout.js
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
   }
 
   try {
-    const body = req.body;
-    const lineItems = body.lineItems || body.items || [];
+    const { lineItems } = req.body;
     if (!Array.isArray(lineItems) || lineItems.length === 0) {
       return res.status(400).json({ error: "No hay productos en el carrito" });
     }
 
-    // --- MUTACIÓN checkoutCreate ---
     const mutation = `
-      mutation checkoutCreate($input: CheckoutCreateInput!) {
-        checkoutCreate(input: $input) {
-          checkout {
-            id
-            webUrl
-          }
+      mutation CartCreate($input: CartInput!) {
+        cartCreate(input: $input) {
+          cart { id checkoutUrl }
           userErrors { message }
         }
       }
     `;
 
-    const shopifyRes = await fetch(
+    const response = await fetch(
       `https://${process.env.SHOPIFY_DOMAIN}/api/2024-01/graphql.json`,
       {
         method: "POST",
@@ -36,8 +32,8 @@ export default async function handler(req, res) {
           query: mutation,
           variables: {
             input: {
-              lineItems: lineItems.map((item) => ({
-                variantId: item.variantId,
+              lines: lineItems.map((item) => ({
+                merchandiseId: item.variantId,
                 quantity: item.quantity,
               })),
             },
@@ -46,45 +42,26 @@ export default async function handler(req, res) {
       }
     );
 
-    const text = await shopifyRes.text();
-    let shopifyData;
-    try {
-      shopifyData = JSON.parse(text);
-    } catch (err) {
-      return res.status(500).json({ error: "Respuesta inválida de Shopify" });
-    }
+    const data = await response.json();
 
-    // Errores de Shopify
-    if (
-      shopifyData.errors ||
-      shopifyData.data?.checkoutCreate?.userErrors?.length
-    ) {
-      const message =
-        shopifyData.errors?.[0]?.message ||
-        shopifyData.data.checkoutCreate.userErrors?.[0]?.message ||
+    if (data.errors || data.data?.cartCreate?.userErrors?.length) {
+      const msg =
+        data.errors?.[0]?.message ||
+        data.data.cartCreate.userErrors?.[0]?.message ||
         "Error desconocido de Shopify";
-      return res.status(400).json({ error: message });
+      return res.status(400).json({ error: msg });
     }
 
-    // URL de checkout
-    let url = shopifyData.data?.checkoutCreate?.checkout?.webUrl;
+    const url = data.data.cartCreate.cart.checkoutUrl;
     if (!url) {
       return res
         .status(500)
         .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
-
-    // (opcional) Forzar dominio myshopify.com si quieres:
-    // try {
-    //   const parsed = new URL(url);
-    //   parsed.hostname = "dkdy49-tw.myshopify.com"; // <-- reemplaza por el tuyo si quieres
-    //   url = parsed.toString();
-    // } catch (e) {}
-
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
-    return res.status(500).json({
-      error: err.message || "Ocurrió un error en el servidor",
-    });
+    return res
+      .status(500)
+      .json({ error: err.message || "Ocurrió un error en el servidor" });
   }
 }
