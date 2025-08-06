@@ -1,22 +1,16 @@
-// pages/api/checkout.js
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
   }
 
   try {
-    // 1. Lee el body
     const body = req.body;
-    // Si usas Next.js 13/14, quizá necesites:
-    // const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
     const lineItems = body.lineItems || body.items || [];
     if (!Array.isArray(lineItems) || lineItems.length === 0) {
       return res.status(400).json({ error: "No hay productos en el carrito" });
     }
 
-    // 2. Prepara la mutación
     const mutation = `
       mutation CartCreate($input: CartInput!) {
         cartCreate(input: $input) {
@@ -29,7 +23,6 @@ export default async function handler(req, res) {
       }
     `;
 
-    // 3. Haz el fetch a Shopify
     const shopifyRes = await fetch(
       `https://${process.env.SHOPIFY_DOMAIN}/api/2024-01/graphql.json`,
       {

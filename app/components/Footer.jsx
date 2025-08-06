@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, Music2 } from "lucide-react";
+import { Facebook, Instagram, Mail, Music2, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -6,11 +6,13 @@ export default function Footer() {
     <footer className="bg-bg items-center text-white px-6 md:px-20 py-12">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-20 sm:gap-10 items-center">
         {/* Redes sociales */}
-        <div className="flex flex-col gap-4">
-          <h4 className="text-sm font-semibold">Nuestras redes sociales</h4>
+        <div className="flex flex-col gap-7">
+          <h4 className="text-sm font-semibold">
+            ¿Quieres comunicarte con nostros?
+          </h4>
           <div className="flex gap-4">
             <a
-              href="https://www.instagram.com/" // pon aquí tu URL real
+              href="https://www.instagram.com/kla.joyeriamx?igsh=MXZreXp2Y2lrYWduNw%3D%3D"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-black p-2 rounded-full"
@@ -18,7 +20,7 @@ export default function Footer() {
               <Instagram className="w-5 h-5" />
             </a>
             <a
-              href="https://www.facebook.com/" // pon aquí tu URL real
+              href="https://www.facebook.com/KLAJOYERIA?mibextid=wwXIfr&rdid=I8cZQKD6GMMk8mIu&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F19cYevLodK%2F%3Fmibextid%3DwwXIfr#"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-black p-2 rounded-full"
@@ -26,19 +28,20 @@ export default function Footer() {
               <Facebook className="w-5 h-5" />
             </a>
             <a
-              href="#" // pon aquí tu URL real
+              href="https://wa.me/522212775846?text=¡Hola!%20Quiero%20más%20info%20sobre%20CLEMENTINA"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-black p-2 rounded-full"
             >
-              <Music2 className="w-5 h-5" />
+              <MessageCircle className="w-5 h-5" />
             </a>
           </div>
+
           <a
             href="mailto:clientes@klajoyeria.mx"
             className="underline text-sm mt-2"
           >
-            clientes@klajoyeria.mx
+            klajoyeria@gmail.com
           </a>
         </div>
 
