@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       parsed.hostname = "dkdy49-tw.myshopify.com";
       url = parsed.toString();
     } catch (e) {}
-
+    console.log("Checkout URL generado:", url);
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
     return res.status(500).json({
