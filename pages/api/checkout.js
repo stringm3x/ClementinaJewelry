@@ -5,7 +5,6 @@ export default async function handler(req, res) {
 
   try {
     const body = req.body;
-
     const lineItems = body.lineItems || body.items || [];
     if (!Array.isArray(lineItems) || lineItems.length === 0) {
       return res.status(400).json({ error: "No hay productos en el carrito" });
@@ -65,12 +64,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: message });
     }
 
-    const url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
+    let url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
     if (!url) {
       return res
         .status(500)
         .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
+
+    try {
+      const parsed = new URL(url);
+      parsed.hostname = "dkdy49-tw.myshopify.com";
+      url = parsed.toString();
+    } catch (e) {}
 
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
