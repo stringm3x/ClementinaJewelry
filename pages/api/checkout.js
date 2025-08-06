@@ -64,19 +64,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: message });
     }
 
-    let url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
+    const url = shopifyData.data?.cartCreate?.cart?.checkoutUrl;
     if (!url) {
       return res
         .status(500)
         .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
 
-    try {
-      const parsed = new URL(url);
-      parsed.hostname = "dkdy49-tw.myshopify.com";
-      url = parsed.toString();
-    } catch (e) {}
-    console.log("Checkout URL generado:", url);
+    // NO CAMBIES EL DOMINIO AQUÍ
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
     return res.status(500).json({
