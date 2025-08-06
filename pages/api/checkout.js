@@ -70,8 +70,6 @@ export default async function handler(req, res) {
         .status(500)
         .json({ error: "No se obtuvo el checkoutUrl de Shopify" });
     }
-
-    // NO CAMBIES EL DOMINIO AQUÍ
     return res.status(200).json({ checkoutUrl: url });
   } catch (err) {
     return res.status(500).json({
