@@ -10,7 +10,7 @@ const roboto = Roboto({
 });
 
 export const metadata = {
-  title: "Clementina Jewlery",
+  title: "Clementina Jewelry",
   description: "Joyeria Atemporal",
   icons: {
     icon: "/favico.jpeg",
