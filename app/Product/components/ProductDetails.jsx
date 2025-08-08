@@ -163,9 +163,6 @@ export default function ProductDetails({ product }) {
                 </button>
               ))}
             </div>
-            <p className="text-md mt-2 text-zinc underline cursor-pointer">
-              Guía de tallas &gt;
-            </p>
           </div>
         ) : null}
 
@@ -178,7 +175,7 @@ export default function ProductDetails({ product }) {
                 <button
                   onClick={() => {
                     setSelectedColor(colorName);
-                    setQuantity(1); // Reset cantidad al cambiar color
+                    setQuantity(1);
                   }}
                   disabled={!colorsAvailable.includes(colorName)}
                   className={`w-8 h-8 rounded-full border-2 ${
@@ -194,8 +191,12 @@ export default function ProductDetails({ product }) {
                         ? "#d4d4d4"
                         : colorName.toLowerCase() === "dorado"
                         ? "#f1c867"
-                        : colorName.toLowerCase() === "coral"
-                        ? "#b08b78"
+                        : colorName.toLowerCase() === "rosa"
+                        ? "#ff0080"
+                        : colorName.toLowerCase() === "azul"
+                        ? "#008bff"
+                        : colorName.toLowerCase() === "verde"
+                        ? "#00913f"
                         : "#fff",
                   }}
                   title={colorName}
