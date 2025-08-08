@@ -98,7 +98,6 @@ export default function ProductDetails({ product }) {
         img.node.altText.toLowerCase().includes(selectedColor.toLowerCase())
     ) || images[0];
 
-  // Validar si existe imagen específica para el color seleccionado
   const colorHasImage = images.some(
     (img) =>
       img.node.altText &&

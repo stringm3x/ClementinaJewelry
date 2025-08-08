@@ -20,7 +20,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Escucha cambios en el token de login en todas las pestañas
   useEffect(() => {
     const checkToken = () =>
       setLoggedIn(!!localStorage.getItem("customerToken"));
@@ -29,8 +28,6 @@ export default function Navbar() {
 
     window.addEventListener("storage", checkToken);
 
-    // BONUS: Cuando se hace login desde el mismo componente (por ejemplo después de login),
-    // podemos lanzar un evento personalizado para que el Navbar se actualice sin recargar
     window.addEventListener("customerTokenChanged", checkToken);
 
     return () => {
@@ -39,13 +36,9 @@ export default function Navbar() {
     };
   }, []);
 
-  // Cuando haces login, llama a este helper:
-  // window.dispatchEvent(new Event("customerTokenChanged"));
-  // Hazlo DESPUÉS de guardar el token en localStorage en tu login.
-
   function handleLogout() {
     localStorage.removeItem("customerToken");
-    window.dispatchEvent(new Event("customerTokenChanged")); // ¡Actualiza Navbars!
+    window.dispatchEvent(new Event("customerTokenChanged"));
     setMenuOpen(false);
     setLoggedIn(false);
   }

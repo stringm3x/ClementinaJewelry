@@ -38,7 +38,6 @@ export default async function handler(req, res) {
     );
   
     const data = await shopifyRes.json();
-    // Shopify devuelve los errores y el token en data.data.customerAccessTokenCreate
     return res.status(200).json(data.data.customerAccessTokenCreate);
   }
   

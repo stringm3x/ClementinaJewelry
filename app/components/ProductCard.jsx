@@ -7,7 +7,6 @@ export default function ProductCard({ product }) {
   const price = variant?.price.amount;
   const compareAt = variant?.compareAtPrice?.amount;
 
-  // Calcula descuento
   const hasDiscount = compareAt && compareAt > price;
   const discountPercent = hasDiscount
     ? Math.round(((compareAt - price) / compareAt) * 100)
