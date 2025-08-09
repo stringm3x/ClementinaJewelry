@@ -192,9 +192,9 @@ export default function ProductDetails({ product }) {
                         : colorName.toLowerCase() === "dorado"
                         ? "#f1c867"
                         : colorName.toLowerCase() === "rosa"
-                        ? "#ff0080"
+                        ? "#fc9fff"
                         : colorName.toLowerCase() === "azul"
-                        ? "#008bff"
+                        ? "#008b"
                         : colorName.toLowerCase() === "verde"
                         ? "#00913f"
                         : "#fff",

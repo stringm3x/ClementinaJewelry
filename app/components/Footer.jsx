@@ -41,7 +41,7 @@ export default function Footer() {
             href="mailto:clientes@klajoyeria.mx"
             className="underline text-sm mt-2"
           >
-            klajoyeria@gmail.com
+            clementinayjewelry@gmail.com
           </a>
         </div>
 
