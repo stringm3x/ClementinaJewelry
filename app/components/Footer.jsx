@@ -72,6 +72,9 @@ export default function Footer() {
           <Link href="/Earrings" className="hover:underline">
             Aretes
           </Link>
+          <Link href="/Clock" className="hover:underline">
+            Relojes
+          </Link>
           <Link
             href="/aviso-de-privacidad"
             className="underline font-bold mt-2"

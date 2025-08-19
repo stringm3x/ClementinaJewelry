@@ -49,6 +49,7 @@ export default function Navbar() {
     { label: "Pulseras", href: "/Bracelets" },
     { label: "Anillos", href: "/Rings" },
     { label: "Aretes", href: "/Earrings" },
+    { label: "Relojes", href: "/Clock" },
   ];
 
   return (
