@@ -197,6 +197,8 @@ export default function ProductDetails({ product }) {
                         ? "#008b"
                         : colorName.toLowerCase() === "verde"
                         ? "#00913f"
+                        : colorName.toLowerCase() === "verde"
+                        ? "#"
                         : "#fff",
                   }}
                   title={colorName}

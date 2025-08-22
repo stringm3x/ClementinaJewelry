@@ -30,6 +30,12 @@ const cards = [
     href: "/Rings",
     img: "/products/anillos.jpg",
   },
+  {
+    id: "5",
+    title: "Relojes",
+    href: "/Clock",
+    img: "/products/relojes.jpg",
+  },
 ];
 
 const Products = () => {

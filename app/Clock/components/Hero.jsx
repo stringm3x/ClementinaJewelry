@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <div className="relative h-screen  content-center p-20">
       <Image
-        src="/Hero/bracelets.jpg"
+        src="/Hero/clock.jpg"
         fill
         alt="hero"
         className="object-cover absolute"
