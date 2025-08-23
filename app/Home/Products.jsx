@@ -30,12 +30,6 @@ const cards = [
     href: "/Rings",
     img: "/products/anillos.jpg",
   },
-  {
-    id: "5",
-    title: "Relojes",
-    href: "/Clock",
-    img: "/products/relojes.jpg",
-  },
 ];
 
 const Products = () => {
@@ -51,7 +45,7 @@ const Products = () => {
   };
 
   return (
-    <section className="relative px-2 sm:px-5 lg:px-10 py-10">
+    <section className="relative px-2 sm:px-5 lg:px-10 py-10 flex flex-col gap-5">
       {/* Flechas */}
       <button
         onClick={() => scroll("left")}
@@ -92,6 +86,20 @@ const Products = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="relative h-64 p-5 sm:p-20 flex flex-col gap-2">
+        <Image
+          className="absolute object-cover"
+          src="/products/relojes.jpg"
+          fill
+        />
+        <h1 className="relative text-white text-3xl">Relojes</h1>
+        <Link href="/Clock" className="relative">
+          <button className="bg-white hover:bg-black text-black hover:text-white px-6 py-2 rounded-full text-sm font-semibold">
+            Ver más
+          </button>
+        </Link>
       </div>
     </section>
   );
