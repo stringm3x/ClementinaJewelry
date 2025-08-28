@@ -109,7 +109,7 @@ export default function RegisterPage() {
           {error && <p className="text-red-500 text-sm text-left">{error}</p>}
           {success && (
             <p className="text-green-600 text-sm text-left">
-              ¡Cuenta creada! Revisa tu correo para activar tu cuenta.
+              ¡Cuenta creada!
             </p>
           )}
 
