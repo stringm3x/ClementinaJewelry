@@ -12,7 +12,7 @@ export default function Footer() {
           </h4>
           <div className="flex gap-4">
             <a
-              href="https://www.instagram.com/kla.joyeriamx?igsh=MXZreXp2Y2lrYWduNw%3D%3D"
+              href="https://www.instagram.com/clementina.jewelry/"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-black p-2 rounded-full"
